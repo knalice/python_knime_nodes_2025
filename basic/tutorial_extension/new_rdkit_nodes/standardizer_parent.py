@@ -62,17 +62,10 @@ from . import utils
 #     "c:/Users/glandrum/Code/python_knime_nodes/basic/tutorial_extension/new_rdkit_nodes/knime-chemistry/org.knime.chem.types/plugin.xml")
 import knime.types.chemistry as cet
 
-
-
 import logging
-
 LOGGER = logging.getLogger(__name__)
-
 from rdkit.Chem.MolStandardize import rdMolStandardize
-
-# The standardization code is very verbose, so disable the info log
-from rdkit import RDLogger
-
+from rdkit import RDLogger # The standardization code is very verbose, so disable the info log
 RDLogger.DisableLog("rdApp.info")
 
 
