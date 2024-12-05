@@ -55,8 +55,8 @@ from rdkit.Chem import rdMolDescriptors
 from rdkit.Chem import rdFingerprintGenerator
 from rdkit.Chem.Draw import IPythonConsole
 from rdkit.Chem import Draw
-from new_rdkit_nodes import utils
-from new_rdkit_nodes.visualize_fp_bits import visualizefpbits
+from . import utils
+from .visualize_fp_bits import visualizefpbits
 from PIL import Image
 from io import BytesIO
 

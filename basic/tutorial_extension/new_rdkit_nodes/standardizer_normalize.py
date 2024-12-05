@@ -52,7 +52,7 @@ from rdkit import Chem
 import pandas as pd
 import knime.types.chemistry as cet  # To work with and compare against chemical data types like SMILES,...
 import pyarrow as pa
-from new_rdkit_nodes import utils
+from . import utils
 #import knime_arrow_pandas  # TODO Refactor once ticket AP-19209 is implemented
 
 from rdkit.Chem.MolStandardize import rdMolStandardize
@@ -118,6 +118,6 @@ class GetNormalizedMoleculeNode(knext.PythonNode):
             exec_context.set_progress(progress=progress)
 
         # Add the parent molecule to the pandas dataframe as a new column
-        df["Parent Molecule"] = pmols
+        df["Normalized Molecule"] = pmols
         # Convert the processed table back from a pandas DataFrame to a KNIME table
         return knext.Table.from_pandas(df)

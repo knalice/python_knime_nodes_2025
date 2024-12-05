@@ -53,10 +53,15 @@ import logging
 import knime.extension as knext
 from rdkit import Chem
 import pandas as pd
-import knime.types.chemistry as cet  # To work with and compare against chemical data types like SMILES,...
-import pyarrow as pa
-from new_rdkit_nodes import utils
+from . import utils
 #import knime_arrow_pandas  # TODO Refactor once ticket AP-19209 is implemented
+
+# import knime.extension.testing as ktest
+# # this also puts it on the Pythonpath
+# ktest.register_extension(
+#     "c:/Users/glandrum/Code/python_knime_nodes/basic/tutorial_extension/new_rdkit_nodes/knime-chemistry/org.knime.chem.types/plugin.xml")
+import knime.types.chemistry as cet
+
 
 
 import logging
@@ -145,8 +150,15 @@ class GetParentMoleculeNode(knext.PythonNode):
         add_to_progress = 1 / input_1.num_rows
         pmols = []
         for mol in mols:
-            parent = self.standardization_actions[self.stand_action_param](
-                mol, skipStandardize=True)
+            mol.UpdatePropertyCache(strict=False)
+            try:
+                parent = self.standardization_actions[self.stand_action_param](
+                    mol, skipStandardize=True)
+            except:
+                LOGGER.warning(
+                    f"Standardization failed for molecule"
+                )
+                parent = None
             pmols.append(parent)
             progress += add_to_progress
             exec_context.set_progress(progress=progress)

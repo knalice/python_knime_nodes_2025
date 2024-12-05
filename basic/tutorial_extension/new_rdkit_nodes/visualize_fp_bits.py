@@ -53,7 +53,7 @@ from rdkit import Chem
 from rdkit.Chem import rdMolDescriptors
 from rdkit.Chem.Draw import IPythonConsole
 from rdkit.Chem import Draw
-from new_rdkit_nodes import utils
+from . import utils
 
 from PIL import Image
 from io import BytesIO

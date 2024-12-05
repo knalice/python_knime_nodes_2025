@@ -55,7 +55,7 @@ from rdkit import Chem
 from rdkit.Chem import Draw
 from rdkit.Chem.Draw import SimilarityMaps
 from rdkit.Chem import rdMolDescriptors
-from new_rdkit_nodes.utils import category
+from .utils import category
 #import chem_extension_types as cet  # To work with and compare against chemical data types like SMILES,...
 
 
