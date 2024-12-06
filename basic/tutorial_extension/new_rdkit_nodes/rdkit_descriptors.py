@@ -53,7 +53,7 @@ import knime_extension as knext
 import pandas as pd
 from rdkit import Chem
 from rdkit.Chem import  Descriptors
-from new_rdkit_nodes import utils
+from . import utils
 exec_path = sys.executable
 sys.path.append(os.path.join(os.path.dirname(exec_path),'Library', 'share','RDKit','Contrib'))
 import SA_Score
@@ -121,7 +121,7 @@ class ExtensiveDescriptorCalculator:
         
         # calculate the descriptors
         descriptors = {key:[] for key in getDescriptorDataTypes().keys()}
-
+        LOGGER.warning('WOT: '+str(list(descriptors.keys())))
         progress = 0.0
         add_to_progress = 1 / input_1.num_rows
 
@@ -169,9 +169,12 @@ class ExtensiveDescriptorCalculator:
 
         return knext.Table.from_pandas(df)
 
+fscore = None
 def getMolDescriptors(mol, missingVal=None):
+    global fscore
+    if fscore is None:
+        fscore = npscorer.readNPModel()
     res = {}
-    fscore = npscorer.readNPModel()
     for nm,fn in Descriptors._descList:
         if nm == "Ipc":
             continue
@@ -182,9 +185,9 @@ def getMolDescriptors(mol, missingVal=None):
             traceback.print_exc()
             val = missingVal
         res[nm] = val
-        res['TPSA_includeSandP'] = Descriptors.TPSA(mol, includeSandP=True)
-        res['SA_score'] = sascorer.calculateScore(mol)
-        res['NP_Score'] = npscorer.scoreMol(mol,fscore)
+    res['TPSA_includeSandP'] = Descriptors.TPSA(mol, includeSandP=True)
+    res['SA_score'] = sascorer.calculateScore(mol)
+    res['NP_Score'] = npscorer.scoreMol(mol,fscore)
     return res
 
 # def getDescriptorDataTypes(missingVal=None):
@@ -213,7 +216,7 @@ def getDescriptorDataTypes(missingVal=None):
             import traceback
             traceback.print_exc()
             tp = missingVal
-            res[k] = tp
+        res[k] = tp
     return res
 
 #################

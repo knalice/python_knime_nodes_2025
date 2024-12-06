@@ -43,8 +43,8 @@
 # ------------------------------------------------------------------------
 """
 Part of the RDKit Python extension. Node 'Enumerate Stereoisomers'.
-@author Greg Landrum, ETH Zurich, Switzerland
 @author Alice Krebs, KNIME AG, Konstanz, Germany
+@author Greg Landrum, ETH Zurich, Switzerland
 """
 
 import logging
@@ -53,7 +53,7 @@ from rdkit import Chem
 from rdkit.Chem import Draw
 from rdkit.Chem import EnumerateStereoisomers
 import knime.types.chemistry as cet
-from new_rdkit_nodes import utils
+from . import utils
 import pandas as pd
 import numpy as np
 LOGGER = logging.getLogger(__name__)
@@ -82,7 +82,7 @@ class StereoisomerEnumeration(knext.PythonNode):
 
     molecule_column_param = knext.ColumnParameter(
         label="Molecule column",
-        description="Select the molecule column to standardize. The column has to be SMILES, SDF, or RDKit molecule.",
+        description="Select the molecule column to work with. The column has to be SMILES, SDF, or RDKit molecule.",
         port_index=0,
         column_filter=utils.column_is_convertible_to_mol,
         include_row_key=False,
@@ -97,7 +97,7 @@ class StereoisomerEnumeration(knext.PythonNode):
     
     onlyunassigned = knext.BoolParameter(
         label="Unspecified centers only",
-        description="If set (the default), stereocenters which have specified stereochemistry will not be perturbed unless they are part of a relative stereo group.",
+        description="If set (the default), stereo-centers and -bonds which have specified stereochemistry will not be perturbed unless they are part of a relative stereo group.",
         default_value=True
         )
     
@@ -109,13 +109,13 @@ class StereoisomerEnumeration(knext.PythonNode):
     
     onlystereogroups = knext.BoolParameter(
         label="Stereo groups only",
-        description="Only enumerate stereocenters involved in stereo groups (enhanced stereochemistry).",
+        description="Only enumerate stereo-centers and -bonds involved in stereo groups (enhanced stereochemistry).",
         default_value=False
         )
 
     tryembedding = knext.BoolParameter(
         label="tryEmbedding",
-        description="The process attempts to generate a standard RDKit distance geometry conformation for the stereisomer (computationally expensive).",
+        description="The process attempts to generate a standard RDKit distance geometry conformer for the stereisomer in order to make sure that the stereoisomer can actually exist (computationally expensive).",
         default_value=False
         )
     
@@ -148,7 +148,8 @@ class StereoisomerEnumeration(knext.PythonNode):
                                                 self.molecule_column_param,
                                                 sanitizeOnParse=True)
         
-        esopt = EnumerateStereoisomers.StereoEnumerationOptions(tryEmbedding=self.tryembedding, onlyUnassigned=self.onlyunassigned, maxIsomers=1024, rand=None, unique=self.unique, onlyStereoGroups=self.onlystereogroups)
+        esopt = EnumerateStereoisomers.StereoEnumerationOptions(tryEmbedding=self.tryembedding, onlyUnassigned=self.onlyunassigned, 
+                maxIsomers=1024, rand=None, unique=self.unique, onlyStereoGroups=self.onlystereogroups)
         
         progress = 0.0
         add_to_progress = 1 / input_1.num_rows
