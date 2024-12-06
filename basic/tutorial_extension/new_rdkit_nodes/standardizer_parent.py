@@ -120,7 +120,7 @@ class GetParentMoleculeNode(knext.PythonNode):
     )
 
     def configure(self, configure_context, input_schema_1: knext.Schema):
-        LOGGER.warning(f'types: {knext.supported_value_types()}')
+        # LOGGER.warning(f'types: {knext.supported_value_types()}')
         return input_schema_1.append(
             knext.Column(ktype=Chem.Mol, name="Parent Molecule"))
 
