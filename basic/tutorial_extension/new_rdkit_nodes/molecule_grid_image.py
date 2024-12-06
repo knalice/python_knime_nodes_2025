@@ -49,14 +49,8 @@ Part of the RDKit Python extension. Node 'Mols to Grid Image'.
 
 import logging
 import knime_extension as knext
-from rdkit import Chem
-from rdkit.Chem.Draw import IPythonConsole
-from rdkit.Chem import Draw
-from new_rdkit_nodes import utils
-from PIL import Image
-from io import BytesIO
+from . import utils
 LOGGER = logging.getLogger(__name__)
-IPythonConsole.UninstallIPythonRenderer()
 
 @knext.node(
     name="Molecules to Image Grid",
@@ -123,6 +117,7 @@ class MolsToGrid:
  
     def execute(self, exec_context: knext.ExecutionContext,
                 input_1: knext.Table):
+        from rdkit.Chem import Draw
     
         if self.molecule_column_param is None:
             raise AttributeError(

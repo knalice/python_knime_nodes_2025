@@ -49,9 +49,6 @@ Part of the RDKit Python extension. Node 'Enumerate Stereoisomers'.
 
 import logging
 import knime_extension as knext
-from rdkit import Chem
-from rdkit.Chem import Draw
-from rdkit.Chem import EnumerateStereoisomers
 import knime.types.chemistry as cet
 from . import utils
 import pandas as pd
@@ -120,6 +117,7 @@ class StereoisomerEnumeration(knext.PythonNode):
         )
     
     def configure(self, config_context, input_schema_1: knext.Schema):
+        from rdkit import Chem
         identifier_column_type = get_ktype_for_column(input_schema_1, self.identifier_column_param)
         index_type = knext.int32()
         molecule_column_type = knext.logical(Chem.rdchem.Mol)
@@ -128,6 +126,8 @@ class StereoisomerEnumeration(knext.PythonNode):
  
     def execute(self, exec_context: knext.ExecutionContext,
                 input_1: knext.Table):
+        from rdkit.Chem import EnumerateStereoisomers
+
         if self.molecule_column_param is None:
             raise AttributeError(
             "Molecule column was not selected in configuration dialog."

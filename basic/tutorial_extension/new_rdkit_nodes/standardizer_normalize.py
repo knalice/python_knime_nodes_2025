@@ -48,20 +48,11 @@ Part of the RDKit Python extension. Node 'Normalize Molecule'.
 
 import logging
 import knime.extension as knext
-from rdkit import Chem
 import pandas as pd
 import knime.types.chemistry as cet  # To work with and compare against chemical data types like SMILES,...
 import pyarrow as pa
 from . import utils
 #import knime_arrow_pandas  # TODO Refactor once ticket AP-19209 is implemented
-
-from rdkit.Chem.MolStandardize import rdMolStandardize
-
-# The standardization code is very verbose, so disable the info log
-from rdkit import RDLogger
-
-RDLogger.DisableLog("rdApp.info")
-
 
 @knext.node(
     name="Normalize Molecule",
@@ -89,11 +80,18 @@ class GetNormalizedMoleculeNode(knext.PythonNode):
     )
 
     def configure(self, configure_context, input_schema_1: knext.Schema):
+        from rdkit import Chem
         return input_schema_1.append(
-            knext.Column(ktype=Chem.Mol, name="Parent Molecule"))
+            knext.Column(ktype=Chem.Mol, name="Normalized Molecule"))
 
     def execute(self, exec_context: knext.ExecutionContext,
                 input_1: knext.Table):
+        # The standardization code is very verbose, so disable the info log
+        from rdkit import RDLogger
+        RDLogger.DisableLog("rdApp.info")
+        from rdkit import Chem
+        from rdkit.Chem.MolStandardize import rdMolStandardize
+
         if self.molecule_column_param is None:
             raise AttributeError(
                 "Molecule column was not selected in configuration dialog.")

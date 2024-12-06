@@ -51,7 +51,6 @@ Part of the RDKit Python extension. Node 'Get Parent Molecule'.
 
 import logging
 import knime.extension as knext
-from rdkit import Chem
 import pandas as pd
 from . import utils
 #import knime_arrow_pandas  # TODO Refactor once ticket AP-19209 is implemented
@@ -64,9 +63,8 @@ import knime.types.chemistry as cet
 
 import logging
 LOGGER = logging.getLogger(__name__)
+
 from rdkit.Chem.MolStandardize import rdMolStandardize
-from rdkit import RDLogger # The standardization code is very verbose, so disable the info log
-RDLogger.DisableLog("rdApp.info")
 
 
 @knext.node(
@@ -120,12 +118,16 @@ class GetParentMoleculeNode(knext.PythonNode):
     )
 
     def configure(self, configure_context, input_schema_1: knext.Schema):
+        from rdkit import Chem
         # LOGGER.warning(f'types: {knext.supported_value_types()}')
         return input_schema_1.append(
             knext.Column(ktype=Chem.Mol, name="Parent Molecule"))
 
     def execute(self, exec_context: knext.ExecutionContext,
                 input_1: knext.Table):
+        from rdkit import Chem
+        from rdkit import RDLogger # The standardization code is very verbose, so disable the info log
+        RDLogger.DisableLog("rdApp.info")
         if self.molecule_column_param is None:
             raise AttributeError(
                 "Molecule column was not selected in configuration dialog.")

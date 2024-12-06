@@ -51,15 +51,9 @@ import sys
 import logging
 import knime_extension as knext
 import pandas as pd
-from rdkit import Chem
-from rdkit.Chem import  Descriptors
 from . import utils
 exec_path = sys.executable
 sys.path.append(os.path.join(os.path.dirname(exec_path),'Library', 'share','RDKit','Contrib'))
-import SA_Score
-from SA_Score import sascorer
-import NP_Score
-from NP_Score import npscorer
 LOGGER = logging.getLogger(__name__)
 
 
@@ -142,6 +136,10 @@ class ExtensiveDescriptorCalculator:
 
 fscore = None
 def getMolDescriptors(mol, missingVal=None):
+    from rdkit.Chem import Descriptors
+    from SA_Score import sascorer
+    from NP_Score import npscorer
+
     global fscore
     if fscore is None:
         fscore = npscorer.readNPModel()
@@ -162,6 +160,7 @@ def getMolDescriptors(mol, missingVal=None):
     return res
 
 def getDescriptorDataTypes(missingVal=None):
+    from rdkit import Chem
     res = {}
     mol = Chem.MolFromSmiles('CCO')
     desc = getMolDescriptors(mol)
