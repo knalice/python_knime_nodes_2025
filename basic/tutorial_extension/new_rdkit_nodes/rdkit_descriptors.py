@@ -96,10 +96,10 @@ class ExtensiveDescriptorCalculator:
         mol_dict = getDescriptorDataTypes()
         for col_name in mol_dict: 
             if mol_dict[col_name] is int:
-                ktype = knext.int32()
+                ktype = knext.int64()
             else:
                 ktype = knext.double()
-            input_schema_1.append(knext.Column(ktype,col_name))
+            input_schema_1 = input_schema_1.append(knext.Column(ktype,col_name))
         return input_schema_1
  
     def execute(self, exec_context: knext.ExecutionContext,
@@ -121,7 +121,6 @@ class ExtensiveDescriptorCalculator:
         
         # calculate the descriptors
         descriptors = {key:[] for key in getDescriptorDataTypes().keys()}
-        LOGGER.warning('WOT: '+str(list(descriptors.keys())))
         progress = 0.0
         add_to_progress = 1 / input_1.num_rows
 
@@ -138,34 +137,6 @@ class ExtensiveDescriptorCalculator:
         
         for nm,col in descriptors.items():
             df[nm] = col
-
-        # # calculate the NP score
-        # fscore = npscorer.readNPModel()
-        # NP = []
-        # for mol in mols:
-        #     if mol is None: 
-        #        NP.append(None) 
-        #     else: 
-        #         NP.append(npscorer.scoreMol(mol,fscore))
-        # df['NP_Score'] = NP
-
-        # # calculate the SA score
-        # SA = []
-        # for mol in mols:
-        #     if mol is None: 
-        #         SA.append(None)
-        #     else: 
-        #         SA.append(sascorer.calculateScore(mol))
-        # df['SA_Score'] = SA
-
-        # # calculate TPSA including polar S and P
-        # TPSA_SP = []
-        # for mol in mols:
-        #     if mol is None: 
-        #         TPSA_SP.append(None)
-        #     else: 
-        #         TPSA_SP.append(Descriptors.TPSA(mol, includeSandP=True))
-        # df['TPSA_includeSandP'] = TPSA_SP 
 
         return knext.Table.from_pandas(df)
 
@@ -189,21 +160,6 @@ def getMolDescriptors(mol, missingVal=None):
     res['SA_score'] = sascorer.calculateScore(mol)
     res['NP_Score'] = npscorer.scoreMol(mol,fscore)
     return res
-
-# def getDescriptorDataTypes(missingVal=None):
-#     res = {}
-#     mol = Chem.MolFromSmiles('CCO')
-#     for nm,fn in Descriptors._descList:
-#         if nm == "Ipc":
-#             continue
-#         try:
-#             tp = type(fn(mol))
-#         except:
-#             import traceback
-#             traceback.print_exc()
-#             tp = missingVal
-#         res[nm] = tp
-#     return res
 
 def getDescriptorDataTypes(missingVal=None):
     res = {}
